@@ -19,9 +19,6 @@ dependencies = {
   "lua >= 5.1",
 }
 
-external_dependencies = {
-}
-
 build = {
   type = "builtin",
   modules = {
