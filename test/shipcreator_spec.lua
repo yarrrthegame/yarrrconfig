@@ -21,9 +21,6 @@ _G.DamageCauser = {
 _G.LootDropper = {
   new = function() return "lootdropper" end }
 
-_G.DeleteWhenDestroyed = {
-  new = function() return "deletewhendestroyed" end }
-
 local shape = {
   add_tile = function() end }
 
@@ -88,10 +85,6 @@ describe( "ship creator", function()
 
     it( "has loot dropper", function()
       assert.spy( object_add_behavior ).was_called_with( test_object, "lootdropper" )
-    end)
-
-    it( "is deleted when destroyed", function()
-      assert.spy( object_add_behavior ).was_called_with( test_object, "deletewhendestroyed" )
     end)
 
     it( "has shape behavior", function()

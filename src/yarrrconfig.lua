@@ -23,7 +23,6 @@ function yarrrconfig.create_ship( tiles, additional_behaviors )
       Collider.new( ship_layer ),
       DamageCauser.new( 100 ),
       LootDropper.new(),
-      DeleteWhenDestroyed.new(),
       ShapeBehavior.new( create_shape_from( tiles ) ),
       ShapeGraphics.new()
     } )
