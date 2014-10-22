@@ -1,11 +1,5 @@
 local yarrrconfig = require "yarrrconfig"
 
-local test_object = {}
-function test_object:add_behavior( behavior ) end
-
-_G.Object = {
-  new = function() return test_object end }
-
 _G.PhysicalBehavior = {
   new = function() return "physical_behavior" end }
 
@@ -38,7 +32,8 @@ _G.ship_layer = "ship layer"
 describe( "ship creator", function()
 
   describe( "the created object", function()
-    local object_new = spy.on( Object, "new" )
+
+    local test_object = { add_behavior = function() end }
     local object_add_behavior = spy.on( test_object, "add_behavior" )
     local collider_new = spy.on( Collider, "new" )
     local extra_behaviors = { "first extra behavior", "second extra behavior" }
@@ -46,12 +41,7 @@ describe( "ship creator", function()
     local shape_add_tile = spy.on( shape, "add_tile" )
     local shape_behavior_new = spy.on( ShapeBehavior, "new" )
 
-    local an_object = yarrrconfig.create_ship( tiles, extra_behaviors )
-
-    it( "is an object", function()
-      assert.spy( object_new ).was.called( 1 )
-      assert.are.equal( test_object, an_object )
-    end)
+    yarrrconfig.create_ship( test_object, tiles, extra_behaviors )
 
     it( "adds listed extra behaviors to the object", function()
       for i, behavior in ipairs( extra_behaviors ) do

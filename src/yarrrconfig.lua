@@ -9,15 +9,14 @@ function create_shape_from( tiles )
   return local_shape
 end
 
-function add_behaviors_to( ship, behaviors )
+function add_behaviors_to( object, behaviors )
   for i, behavior  in ipairs( behaviors ) do
-    ship:add_behavior( behavior )
+    object:add_behavior( behavior )
   end
 end
 
-function yarrrconfig.create_ship( tiles, additional_behaviors )
-  ship = Object.new()
-  add_behaviors_to( ship, {
+function yarrrconfig.create_ship( object, tiles, additional_behaviors )
+  add_behaviors_to( object, {
       PhysicalBehavior.new(),
       Inventory.new(),
       Collider.new( ship_layer ),
@@ -27,8 +26,7 @@ function yarrrconfig.create_ship( tiles, additional_behaviors )
       ShapeGraphics.new()
     } )
 
-  add_behaviors_to( ship, additional_behaviors )
-  return ship
+  add_behaviors_to( object, additional_behaviors )
 end
 
 function yarrrconfig.degrees( degree )
