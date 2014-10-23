@@ -29,9 +29,5 @@ function yarrrconfig.create_ship( object, tiles, additional_behaviors )
   add_behaviors_to( object, additional_behaviors )
 end
 
-function yarrrconfig.degrees( degree )
-  return degree * 4
-end
-
 return yarrrconfig
 
