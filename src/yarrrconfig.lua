@@ -29,5 +29,9 @@ function yarrrconfig.create_ship( object, tiles, additional_behaviors )
   add_behaviors_to( object, additional_behaviors )
 end
 
+function yarrrconfig.distance_between( a, b )
+  return math.sqrt( math.pow( a.x - b.x, 2 ) + math.pow( a.y - b.y, 2 ) )
+end
+
 return yarrrconfig
 
