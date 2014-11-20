@@ -38,5 +38,21 @@ function yarrrconfig.ship_of_mission( mission_id )
   return objects[ missions[ mission_id ].character.object_id ]
 end
 
+
+function yarrrconfig.checkpoint( mission_id, destination, radius, till )
+  if till < os.time() then
+    return failed
+  end
+
+  local ship = yarrrconfig.ship_of_mission( mission_id )
+  local distance_from_checkpoin = yarrrconfig.distance_between( ship.coordinate, destination )
+
+  if distance_from_checkpoin <= radius then
+    return succeeded
+  end
+
+  return ongoing
+end
+
 return yarrrconfig
 
