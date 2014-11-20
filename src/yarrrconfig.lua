@@ -33,5 +33,10 @@ function yarrrconfig.distance_between( a, b )
   return math.sqrt( math.pow( a.x - b.x, 2 ) + math.pow( a.y - b.y, 2 ) )
 end
 
+
+function yarrrconfig.ship_of_mission( mission_id )
+  return objects[ missions[ mission_id ].character.object_id ]
+end
+
 return yarrrconfig
 
