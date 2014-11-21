@@ -35,6 +35,17 @@ describe( "mission helpers", function()
 
   end)
 
+  describe( "length of", function()
+
+    it( "returns the length of the vector", function()
+      a = { x = 5, y = 10 }
+      assert.are.equal(
+        math.sqrt( 125 ),
+        yarrrconfig.length_of( a ) )
+    end)
+
+  end)
+
   describe( "ship of mission", function()
 
     it( "returns the ship object of the given mission", function()

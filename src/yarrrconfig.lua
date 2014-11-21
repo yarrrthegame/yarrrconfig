@@ -54,5 +54,11 @@ function yarrrconfig.checkpoint( mission_id, destination, radius, till )
   return ongoing
 end
 
+
+function yarrrconfig.length_of( vector )
+  return yarrrconfig.distance_between( { x=0, y=0 }, vector )
+end
+
+
 return yarrrconfig
 
