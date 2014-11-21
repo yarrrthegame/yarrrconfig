@@ -40,7 +40,7 @@ end
 
 
 function yarrrconfig.checkpoint( mission_id, destination, radius, till )
-  if till < os.time() then
+  if till < universe_time() then
     return failed
   end
 

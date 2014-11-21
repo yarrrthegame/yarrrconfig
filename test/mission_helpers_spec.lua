@@ -23,6 +23,10 @@ _G.failed = 0
 _G.succeeded = 1
 _G.ongoing = 2
 
+function _G.universe_time()
+  return 100000
+end
+
 describe( "mission helpers", function()
 
   describe( "distance between", function()
@@ -72,11 +76,11 @@ describe( "mission helpers", function()
   describe( "checkpoint", function()
 
     function future()
-      return os.time() + 100
+      return universe_time() + 100
     end
 
     function past()
-      return os.time() - 100
+      return universe_time() - 100
     end
 
     function far_away()
