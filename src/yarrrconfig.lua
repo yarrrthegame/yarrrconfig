@@ -63,5 +63,12 @@ function yarrrconfig.is_slower_than( speed, object )
   return yarrrconfig.length_of( object.velocity ) < speed
 end
 
+
+function yarrrconfig.add_instruction( mission, message )
+  mission:add_objective( MissionObjective.new(
+    message,
+    function() return succeeded end ) )
+end
+
 return yarrrconfig
 
