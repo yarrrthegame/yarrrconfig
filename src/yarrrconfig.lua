@@ -59,6 +59,9 @@ function yarrrconfig.length_of( vector )
   return yarrrconfig.distance_between( { x=0, y=0 }, vector )
 end
 
+function yarrrconfig.is_slower_than( speed, object )
+  return yarrrconfig.length_of( object.velocity ) < speed
+end
 
 return yarrrconfig
 

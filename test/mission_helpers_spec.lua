@@ -5,6 +5,8 @@ local radius = 100
 local expected_object = {}
 object_coordinate = { x = 100, y = 100 }
 expected_object.coordinate = object_coordinate
+object_velocity = { x = 10, y = 10 }
+expected_object.velocity = object_velocity
 local expected_object_id = "expected_object_id"
 objects = {}
 objects.expected_object_id = expected_object
@@ -42,6 +44,18 @@ describe( "mission helpers", function()
       assert.are.equal(
         math.sqrt( 125 ),
         yarrrconfig.length_of( a ) )
+    end)
+
+  end)
+
+  describe( "is slower than", function()
+
+    it( "returns true if the speed of the object is less than the given value", function()
+      assert.is_true( yarrrconfig.is_slower_than( 14.15, expected_object ) )
+    end)
+
+    it( "returns false if the speed of the object is more than the given value", function()
+      assert.is_false( yarrrconfig.is_slower_than( 14.14, expected_object ) )
     end)
 
   end)
