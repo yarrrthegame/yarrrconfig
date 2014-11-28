@@ -84,14 +84,14 @@ describe( "mission helpers", function()
     end
 
     function far_away()
-      coordinate = {
+      local coordinate = {
         x = object_coordinate.x + radius + 10,
         y = object_coordinate.y }
       return coordinate
     end
 
     function close_enough()
-      coordinate = {
+      local coordinate = {
         x = object_coordinate.x + radius,
         y = object_coordinate.y }
       return coordinate
@@ -116,6 +116,8 @@ describe( "mission helpers", function()
     end)
 
   end)
+
+
 
 end)
 
