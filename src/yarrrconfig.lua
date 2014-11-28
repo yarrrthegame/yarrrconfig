@@ -31,7 +31,7 @@ function yarrrconfig.create_ship( object, tiles, additional_behaviors )
 end
 
 
-function random_location_around( center, range )
+function yarrrconfig.random_location_around( center, range )
   local location = {
     x = center.x + math.random( -range, range ),
     y = center.y + math.random( -range, range ) }
@@ -40,7 +40,7 @@ function random_location_around( center, range )
 end
 
 
-function coordinate_from( location )
+function yarrrconfig.coordinate_from( location )
   return Coordinate.new( metres( location.x ), metres( location.y ) )
 end
 
@@ -84,6 +84,24 @@ function yarrrconfig.add_instruction( mission, message )
   mission:add_objective( MissionObjective.new(
     message,
     function() return succeeded end ) )
+end
+
+
+function yarrrconfig.wrap_updater( setup, updater, teardown )
+  return function( mission )
+    local context = missions[ mission:id() ]
+    if context.was_setup_called == nil then
+      context.was_setup_called = true
+      setup( mission )
+    end
+    status = updater( mission )
+
+    if status == succeeded then
+      teardown( mission )
+    end
+
+    return status
+  end
 end
 
 return yarrrconfig

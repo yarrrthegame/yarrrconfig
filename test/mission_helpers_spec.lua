@@ -117,7 +117,95 @@ describe( "mission helpers", function()
 
   end)
 
+  describe( "objective updater wrapper", function()
+    function create_checker()
+      local checker = {}
+      checker.call_count = 0
+      checker.call = function( this, parameter )
+        this.was_called_with = parameter
+        this.call_count = this.call_count + 1
+      end
+      return checker
+    end
 
+    local wrapped_updater = nil
+    local test_mission_id = "1"
+    local test_mission = { id = function() return test_mission_id end }
+
+    local setup_checker = nil
+    local updater_checker = nil
+    local teardown_checker = nil
+    local updater_status = nil
+    local returned_status = nil
+
+    function update_with_status( status )
+      updater_status = status
+      returned_status = wrapped_updater( test_mission )
+    end
+
+    before_each( function()
+      updater_status = ongoing
+      setup_checker = create_checker()
+      updater_checker = create_checker()
+      teardown_checker = create_checker()
+
+      _G.missions = {}
+      _G.missions[ test_mission_id ] = {}
+      wrapped_updater = yarrrconfig.wrap_updater(
+        function ( mission )
+          setup_checker:call( mission )
+        end,
+        function ( mission )
+          updater_checker:call( mission )
+          return updater_status
+        end,
+        function ( mission )
+          teardown_checker:call( mission )
+        end)
+
+      update_with_status( ongoing )
+    end)
+
+
+    it( "calls the set up function with the mission object", function()
+      assert.are.equal( 1, setup_checker.call_count )
+      assert.are.same( test_mission, setup_checker.was_called_with )
+    end)
+
+    it( "calls the set up function only the first time", function()
+      wrapped_updater( test_mission )
+      assert.are.equal( 1, setup_checker.call_count )
+    end)
+
+    it( "calls the updater function with the mission object", function()
+      assert.are.equal( 1, updater_checker.call_count )
+      assert.are.same( test_mission, updater_checker.was_called_with )
+    end)
+
+    it( "calls the tear down function with the mission object if the updater succeeds", function()
+      update_with_status( succeeded )
+      assert.are.equal( 1, teardown_checker.call_count )
+      assert.are.same( test_mission, teardown_checker.was_called_with )
+    end)
+
+    it( "calls the tear down function only if the updater succeeds", function()
+      assert.are.equal( 0, teardown_checker.call_count )
+      update_with_status( failed )
+      assert.are.equal( 0, teardown_checker.call_count )
+    end)
+
+    function check_returns_correct_status( status )
+      update_with_status( status )
+      assert.are.equal( status, returned_status )
+    end
+
+    it( "returns with the return value of the updater", function()
+      check_returns_correct_status( ongoing )
+      check_returns_correct_status( succeeded )
+      check_returns_correct_status( failed )
+    end)
+
+  end)
 
 end)
 
