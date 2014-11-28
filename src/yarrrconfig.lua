@@ -40,6 +40,11 @@ function random_location_around( center, range )
 end
 
 
+function coordinate_from( location )
+  return Coordinate.new( metres( location.x ), metres( location.y ) )
+end
+
+
 function yarrrconfig.distance_between( a, b )
   return math.sqrt( math.pow( a.x - b.x, 2 ) + math.pow( a.y - b.y, 2 ) )
 end
