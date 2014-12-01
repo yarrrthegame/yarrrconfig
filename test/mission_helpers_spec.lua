@@ -132,7 +132,7 @@ describe( "mission helpers", function()
 
   end)
 
-  describe( "objective updater wrapper", function()
+  describe( "add objective to mission", function()
     function create_checker()
       local checker = {}
       checker.call_count = 0
@@ -143,22 +143,42 @@ describe( "mission helpers", function()
       return checker
     end
 
-    local wrapped_updater = nil
+    local created_updater = nil
     local test_mission_id = "1"
-    local test_mission = { id = function() return test_mission_id end }
+    local test_mission = {
+      id = function( this )
+        return test_mission_id
+      end,
+      add_objective = function( this, objective )
+        this.new_objective = objective
+      end }
+
+    local test_objective = {}
+    local was_objective_created = false
+    _G.MissionObjective = {
+      new = function( description, updater )
+        was_objective_created = true
+        test_objective.description = description
+        test_objective.updater = updater
+        return test_objective
+      end }
 
     local setup_checker = nil
     local updater_checker = nil
     local teardown_checker = nil
     local updater_status = nil
     local returned_status = nil
+    local expected_description = "objective description appletree"
 
     function update_with_status( status )
       updater_status = status
-      returned_status = wrapped_updater( test_mission )
+      returned_status = created_updater( test_mission )
     end
 
     before_each( function()
+      test_objective = {}
+      test_mission.new_objective = {}
+      was_objective_created = false
       updater_status = ongoing
       setup_checker = create_checker()
       updater_checker = create_checker()
@@ -166,21 +186,36 @@ describe( "mission helpers", function()
 
       _G.mission_contexts = {}
       _G.mission_contexts[ test_mission_id ] = {}
-      wrapped_updater = yarrrconfig.wrap_updater(
-        function ( mission )
+      yarrrconfig.add_objective_to(
+      test_mission,
+      { description = expected_description,
+        setup = function ( mission )
           setup_checker:call( mission )
         end,
-        function ( mission )
+        updater = function ( mission )
           updater_checker:call( mission )
           return updater_status
         end,
-        function ( mission )
+        teardown = function ( mission )
           teardown_checker:call( mission )
-        end)
+        end } )
 
+      created_updater = test_objective.updater
       update_with_status( ongoing )
     end)
 
+
+    it( "creates a mission objective", function()
+      assert.is_true( was_objective_created )
+    end)
+
+    it( "creates the objective with the given description ", function()
+      assert.are.equal( test_objective.description, expected_description )
+    end)
+
+    it( "adds the created objective to the mission", function()
+      assert.are.equal( test_mission.new_objective, test_objective )
+    end)
 
     it( "calls the set up function with the mission object", function()
       assert.are.equal( 1, setup_checker.call_count )
@@ -188,7 +223,7 @@ describe( "mission helpers", function()
     end)
 
     it( "calls the set up function only the first time", function()
-      wrapped_updater( test_mission )
+      created_updater( test_mission )
       assert.are.equal( 1, setup_checker.call_count )
     end)
 

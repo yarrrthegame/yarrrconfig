@@ -88,8 +88,7 @@ function yarrrconfig.add_instruction( mission, message )
     function() return succeeded end ) )
 end
 
-
-function yarrrconfig.wrap_updater( setup, updater, teardown )
+function wrap_updater( setup, updater, teardown )
   return function( mission )
     local context = yarrrconfig.context_of( mission )
     if context.was_setup_called == nil then
@@ -104,6 +103,16 @@ function yarrrconfig.wrap_updater( setup, updater, teardown )
 
     return status
   end
+end
+
+function yarrrconfig.add_objective_to( mission, objective_data )
+  local objective = MissionObjective.new(
+    objective_data.description,
+    wrap_updater(
+      objective_data.setup,
+      objective_data.updater,
+      objective_data.teardown ) )
+  mission:add_objective( objective )
 end
 
 return yarrrconfig
