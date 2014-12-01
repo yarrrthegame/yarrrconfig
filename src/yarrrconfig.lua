@@ -49,18 +49,20 @@ function yarrrconfig.distance_between( a, b )
   return math.sqrt( math.pow( a.x - b.x, 2 ) + math.pow( a.y - b.y, 2 ) )
 end
 
-
-function yarrrconfig.ship_of_mission( mission_id )
-  return objects[ missions[ mission_id ].character.object_id ]
+function yarrrconfig.context_of( mission )
+  return mission_contexts[ mission:id() ]
 end
 
+function yarrrconfig.ship_of( mission )
+  return objects[ yarrrconfig.context_of( mission ).character.object_id ]
+end
 
-function yarrrconfig.checkpoint( mission_id, destination, radius, till )
+function yarrrconfig.checkpoint( mission, destination, radius, till )
   if till < universe_time() then
     return failed
   end
 
-  local ship = yarrrconfig.ship_of_mission( mission_id )
+  local ship = yarrrconfig.ship_of( mission )
   local distance_from_checkpoin = yarrrconfig.distance_between( ship.coordinate, destination )
 
   if distance_from_checkpoin <= radius then
@@ -89,7 +91,7 @@ end
 
 function yarrrconfig.wrap_updater( setup, updater, teardown )
   return function( mission )
-    local context = missions[ mission:id() ]
+    local context = yarrrconfig.context_of( mission )
     if context.was_setup_called == nil then
       context.was_setup_called = true
       setup( mission )

@@ -12,12 +12,18 @@ objects = {}
 objects.expected_object_id = expected_object
 _G.objects = objects
 
+
+
 local existing_mission_id = "existing_mission_id"
-missions = {}
-missions.existing_mission_id = {}
-missions.existing_mission_id.character = {}
-missions.existing_mission_id.character.object_id = expected_object_id
-_G.missions = missions
+mission_contexts = {}
+mission_contexts.existing_mission_id = {}
+mission_contexts.existing_mission_id.character = {}
+mission_contexts.existing_mission_id.character.object_id = expected_object_id
+_G.mission_contexts = mission_contexts
+
+local expected_context = mission_contexts.existing_mission_id
+
+local existing_mission = { id = function( this ) return existing_mission_id end }
 
 _G.failed = 0
 _G.succeeded = 1
@@ -64,10 +70,19 @@ describe( "mission helpers", function()
 
   end)
 
+  describe( "context of mission", function()
+
+    it( "returns the context table for a given mission", function()
+      local context = yarrrconfig.context_of( existing_mission )
+      assert.are.same( context, expected_context )
+    end)
+
+  end)
+
   describe( "ship of mission", function()
 
     it( "returns the ship object of the given mission", function()
-      ship = yarrrconfig.ship_of_mission( existing_mission_id )
+      local ship = yarrrconfig.ship_of( existing_mission )
       assert.are.same( ship, expected_object )
     end)
 
@@ -100,19 +115,19 @@ describe( "mission helpers", function()
     it( "fails if timer expires", function()
       assert.are.equal(
         failed,
-        yarrrconfig.checkpoint( existing_mission_id, far_away(), radius, past() ) )
+        yarrrconfig.checkpoint( existing_mission, far_away(), radius, past() ) )
     end)
 
     it( "returns ongoing if the object is far from the destination ", function()
       assert.are.equal(
         ongoing,
-        yarrrconfig.checkpoint( existing_mission_id, far_away(), radius, future() ) )
+        yarrrconfig.checkpoint( existing_mission, far_away(), radius, future() ) )
     end)
 
     it( "returns succeeded if the object is closer than the radius to the destination ", function()
       assert.are.equal(
         succeeded,
-        yarrrconfig.checkpoint( existing_mission_id, close_enough(), radius, future() ) )
+        yarrrconfig.checkpoint( existing_mission, close_enough(), radius, future() ) )
     end)
 
   end)
@@ -149,8 +164,8 @@ describe( "mission helpers", function()
       updater_checker = create_checker()
       teardown_checker = create_checker()
 
-      _G.missions = {}
-      _G.missions[ test_mission_id ] = {}
+      _G.mission_contexts = {}
+      _G.mission_contexts[ test_mission_id ] = {}
       wrapped_updater = yarrrconfig.wrap_updater(
         function ( mission )
           setup_checker:call( mission )
