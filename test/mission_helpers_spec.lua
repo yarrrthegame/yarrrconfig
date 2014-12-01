@@ -238,6 +238,12 @@ describe( "mission helpers", function()
       assert.are.equal( 1, setup_checker.call_count )
     end)
 
+    it( "can call setup after tear down of the previous objective", function()
+      update_with_status( succeeded )
+      created_updater( test_mission )
+      assert.are.equal( 2, setup_checker.call_count )
+    end)
+
     it( "calls the updater function with the mission object", function()
       assert.are.equal( 1, updater_checker.call_count )
       assert.are.same( test_mission, updater_checker.was_called_with )

@@ -98,6 +98,7 @@ function wrap_updater( setup, updater, teardown )
     status = updater( mission )
 
     if status == succeeded then
+      context.was_setup_called = nil
       teardown( mission )
     end
 
