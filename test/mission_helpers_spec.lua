@@ -175,7 +175,7 @@ describe( "mission helpers", function()
       returned_status = created_updater( test_mission )
     end
 
-    before_each( function()
+    function reset_data()
       test_objective = {}
       test_mission.new_objective = {}
       was_objective_created = false
@@ -183,25 +183,36 @@ describe( "mission helpers", function()
       setup_checker = create_checker()
       updater_checker = create_checker()
       teardown_checker = create_checker()
-
       _G.mission_contexts = {}
       _G.mission_contexts[ test_mission_id ] = {}
+    end
+
+    function create_new_objective( objective_descriptor )
       yarrrconfig.add_objective_to(
       test_mission,
-      { description = expected_description,
+      objective_descriptor )
+
+      created_updater = test_objective.updater
+      update_with_status( ongoing )
+    end
+
+    before_each( function()
+      reset_data()
+      create_new_objective( {
+        description = expected_description,
+
         setup = function ( mission )
           setup_checker:call( mission )
         end,
+
         updater = function ( mission )
           updater_checker:call( mission )
           return updater_status
         end,
+
         teardown = function ( mission )
           teardown_checker:call( mission )
         end } )
-
-      created_updater = test_objective.updater
-      update_with_status( ongoing )
     end)
 
 
@@ -253,6 +264,11 @@ describe( "mission helpers", function()
       check_returns_correct_status( ongoing )
       check_returns_correct_status( succeeded )
       check_returns_correct_status( failed )
+    end)
+
+    it( "fixes missing parts of the objective", function()
+      reset_data()
+      create_new_objective( {} )
     end)
 
   end)

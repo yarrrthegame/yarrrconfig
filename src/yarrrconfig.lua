@@ -105,7 +105,24 @@ function wrap_updater( setup, updater, teardown )
   end
 end
 
+function fix_function_if_nil( objective_data, name )
+  if objective_data[ name ] == nil then
+    objective_data[ name ] = function() end
+  end
+end
+
+function fix_objective_data( objective_data )
+  fix_function_if_nil( objective_data, "setup" )
+  fix_function_if_nil( objective_data, "updater" )
+  fix_function_if_nil( objective_data, "teardown" )
+
+  if objective_data.description == nil then
+    objective_data.description = "WARNING: missing description"
+  end
+end
+
 function yarrrconfig.add_objective_to( mission, objective_data )
+  fix_objective_data( objective_data )
   local objective = MissionObjective.new(
     objective_data.description,
     wrap_updater(
