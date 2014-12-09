@@ -12,18 +12,16 @@ objects = {}
 objects.expected_object_id = expected_object
 _G.objects = objects
 
-
-
 local existing_mission_id = "existing_mission_id"
-mission_contexts = {}
-mission_contexts.existing_mission_id = {}
-mission_contexts.existing_mission_id.character = {}
-mission_contexts.existing_mission_id.character.object_id = expected_object_id
-_G.mission_contexts = mission_contexts
+local existing_mission = { id = function( this ) return existing_mission_id end }
+existing_mission.character = {}
+existing_mission.character.object_id = expected_object_id
 
+local mission_contexts = { existing_mission_id = existing_mission }
 local expected_context = mission_contexts.existing_mission_id
 
-local existing_mission = { id = function( this ) return existing_mission_id end }
+_G.mission_contexts = mission_contexts
+
 
 _G.failed = 0
 _G.succeeded = 1
@@ -275,6 +273,75 @@ describe( "mission helpers", function()
     it( "fixes missing parts of the objective", function()
       reset_data()
       create_new_objective( {} )
+    end)
+
+  end)
+
+  describe( "bind to mission", function()
+    local created_agent = {
+    }
+
+    local agent_period = nil
+
+    local agent_function = nil
+
+    local created_function = {}
+
+    _G.LuaFunction = {
+      new = function( f )
+        agent_function = f
+        return {}
+      end
+    }
+
+    _G.LuaAgent = {
+      new = function( f, period )
+        agent_period = period
+        return created_agent
+      end
+    }
+
+    local object = {
+      add_behavior = function( self, behavior )
+        self.new_behavior = behavior
+      end,
+
+      destroy_self = function( self )
+        self.was_destroyed = true
+      end
+    }
+
+    before_each( function()
+      agent_period = nil
+      agent_function = nil
+      object.new_behavior = nil
+      object.was_destroyed = false
+      _G.mission_contexts.existing_mission_id = existing_mission
+      yarrrconfig.bind_to_mission( object, existing_mission_id )
+    end)
+
+    it( "adds a lua agent to the object", function()
+      assert.are.same( created_agent, object.new_behavior )
+    end)
+
+    it( "passes the agent function to the behavior", function()
+      assert.truthy( agent_function )
+    end)
+
+    it( "the behavior is updated once a second", function()
+      local one_second = 1000000
+      assert.are.equal( one_second, agent_period )
+    end)
+
+    it( "does not destroy the object if the mission still exists", function()
+      agent_function( object )
+      assert.are.equal( false, object.was_destroyed )
+    end)
+
+    it( "destroys the object if the mission does not exist", function()
+      _G.mission_contexts.existing_mission_id = nil
+      agent_function( object )
+      assert.are.equal( true, object.was_destroyed )
     end)
 
   end)

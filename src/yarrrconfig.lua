@@ -148,5 +148,23 @@ function yarrrconfig.go_home( mission )
 
 end
 
+function does_mission_exist( id )
+  return mission_contexts[ id ] ~= nil
+end
+
+function yarrrconfig.bind_to_mission( object, mission_id )
+  local once_per_second = 1000000
+  local behavior = LuaAgent.new( LuaFunction.new(
+    function( object )
+      if does_mission_exist( mission_id ) then
+        return
+      end
+
+      object:destroy_self()
+    end ),
+    once_per_second )
+  object:add_behavior( behavior )
+end
+
 return yarrrconfig
 
