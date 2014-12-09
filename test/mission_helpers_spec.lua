@@ -81,7 +81,32 @@ describe( "mission helpers", function()
 
     it( "returns the ship object of the given mission", function()
       local ship = yarrrconfig.ship_of( existing_mission )
-      assert.are.same( ship, expected_object )
+      assert.are.same( expected_object, ship )
+    end)
+
+  end)
+
+  describe( "ship of mission by id", function()
+
+    it( "returns the ship object of the given mission", function()
+      local ship = yarrrconfig.ship_of_mission_by_id( existing_mission:id() )
+      assert.are.same( expected_object, ship )
+    end)
+
+    it( "returns nil if the mission does not exist", function()
+      local ship = yarrrconfig.ship_of_mission_by_id( "not existing mission" )
+      assert.are.same( nil, ship )
+    end)
+
+    it( "returns nil if the object does not exist", function()
+      local dummy_mission_id = "dummy_mission_id"
+      _G.mission_contexts[ dummy_mission_id ] = {
+        character = {
+          object_id = "not existing object"
+        }
+      }
+      local ship = yarrrconfig.ship_of_mission_by_id( "dummy_mission_id" )
+      assert.are.same( nil, ship )
     end)
 
   end)
@@ -345,6 +370,7 @@ describe( "mission helpers", function()
     end)
 
   end)
+
 
 end)
 

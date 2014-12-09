@@ -57,6 +57,15 @@ function yarrrconfig.ship_of( mission )
   return objects[ yarrrconfig.context_of( mission ).character.object_id ]
 end
 
+function yarrrconfig.ship_of_mission_by_id( mission_id )
+  local mission = mission_contexts[ mission_id ]
+  if mission == nil then
+    return nil
+  end
+
+  return objects[ mission.character.object_id ]
+end
+
 function yarrrconfig.checkpoint( mission, destination, radius, till )
   if till < universe_time() then
     return failed
