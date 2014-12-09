@@ -133,5 +133,20 @@ function yarrrconfig.add_objective_to( mission, objective_data )
   mission:add_objective( objective )
 end
 
+function yarrrconfig.go_home( mission )
+  local till = universe_time() + 300;
+
+  yc.add_objective_to( mission, {
+
+    description = "Go to position 0, 0 until " .. os.date( "!%T", till ) .. " to finish the training.",
+
+    updater = function( mission )
+      return yc.checkpoint( mission, { x=0, y=0 }, 1000, till )
+    end
+
+  } )
+
+end
+
 return yarrrconfig
 
