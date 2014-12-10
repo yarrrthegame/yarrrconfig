@@ -75,9 +75,9 @@ function yarrrconfig.checkpoint( mission, destination, radius, till )
   end
 
   local ship = yarrrconfig.ship_of( mission )
-  local distance_from_checkpoin = yarrrconfig.distance_between( ship.coordinate, destination )
+  local distance_from_checkpoint = yarrrconfig.distance_between( ship.coordinate, destination )
 
-  if distance_from_checkpoin <= radius then
+  if distance_from_checkpoint <= radius then
     return succeeded
   end
 
@@ -86,6 +86,10 @@ end
 
 function yarrrconfig.coordinate_difference( a, b )
   return { x=a.x - b.x, y=a.y - b.y }
+end
+
+function yarrrconfig.coordinate_sum( a, b )
+  return { x=a.x + b.x, y=a.y + b.y }
 end
 
 function yarrrconfig.length_of( vector )
@@ -163,6 +167,20 @@ end
 
 function yarrrconfig.go_home( mission )
   yarrrconfig.go_to( mission, { x=0, y=0 }, function() end )
+end
+
+function yarrrconfig.run( mission, speed, done )
+  yarrrconfig.add_objective_to( mission, {
+    description = "As fast as you can...",
+    updater = function( mission )
+      local ship = yarrrconfig.ship_of( mission )
+      if yarrrconfig.length_of( ship.velocity ) > speed then
+        return succeeded
+      end
+      return ongoing
+    end,
+    teardown = done
+  } )
 end
 
 function does_mission_exist( id )
