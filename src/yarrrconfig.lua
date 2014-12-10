@@ -84,6 +84,9 @@ function yarrrconfig.checkpoint( mission, destination, radius, till )
   return ongoing
 end
 
+function yarrrconfig.coordinate_difference( a, b )
+  return { x=a.x - b.x, y=a.y - b.y }
+end
 
 function yarrrconfig.length_of( vector )
   return yarrrconfig.distance_between( { x=0, y=0 }, vector )
