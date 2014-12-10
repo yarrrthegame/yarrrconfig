@@ -39,6 +39,9 @@ function yarrrconfig.random_location_around( center, range )
   return location
 end
 
+function yarrrconfig.random_velocity( max )
+  return yarrrconfig.random_location_around( { x=0, y=0 }, max )
+end
 
 function yarrrconfig.coordinate_from( location )
   return Coordinate.new( metres( location.x ), metres( location.y ) )
