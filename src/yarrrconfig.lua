@@ -142,19 +142,21 @@ function yarrrconfig.add_objective_to( mission, objective_data )
   mission:add_objective( objective )
 end
 
-function yarrrconfig.go_to( mission, coordinate )
-  local till = universe_time() + 300;
+function yarrrconfig.go_to( mission, coordinate, on_arrive )
+  local till = universe_time() + 300
+
   yarrrconfig.add_objective_to( mission, {
     description = "Go to position " .. coordinate.x .. ", " .. coordinate.y .. " until " .. os.date( "!%T", till ) .. ".",
     updater = function( mission )
-      return yarrrconfig.checkpoint( mission, coordinate, 1000, till )
-    end
+      return yarrrconfig.checkpoint( mission, coordinate, 500, till )
+    end,
+    teardown = on_arrive
   } )
 
 end
 
 function yarrrconfig.go_home( mission )
-  yarrrconfig.go_to( mission, { x=0, y=0 } )
+  yarrrconfig.go_to( mission, { x=0, y=0 }, function() end )
 end
 
 function does_mission_exist( id )
