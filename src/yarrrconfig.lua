@@ -141,6 +141,11 @@ function fix_objective_data( objective_data )
   end
 end
 
+function yarrrconfig.wander_around( object, mission_id )
+  object:set_velocity( yarrrconfig.coordinate_from( yarrrconfig.random_velocity( 50 ) ) )
+end
+
+
 function yarrrconfig.add_objective_to( mission, objective_data )
   fix_objective_data( objective_data )
   local objective = MissionObjective.new(
@@ -152,8 +157,30 @@ function yarrrconfig.add_objective_to( mission, objective_data )
   mission:add_objective( objective )
 end
 
-function yarrrconfig.go_to( mission, coordinate, on_arrive )
-  local till = universe_time() + 300
+function yarrrconfig.stay_in_position_for( message, mission, coordinate, seconds, done )
+  local till = universe_time() + seconds
+
+  yarrrconfig.add_objective_to( mission, {
+    description = message,
+    updater = function( mission )
+      local ship = yarrrconfig.ship_of( mission )
+      local diff = yarrrconfig.coordinate_difference( ship.coordinate, coordinate )
+      if yarrrconfig.length_of( diff ) > 2000 then
+        return failed
+      end
+
+      if universe_time() > till then
+        return succeeded
+      end
+
+      return ongoing
+    end,
+    teardown = done
+  } )
+end
+
+function yarrrconfig.go_to_in_seconds( mission, coordinate, seconds, on_arrive )
+  local till = universe_time() + seconds
 
   yarrrconfig.add_objective_to( mission, {
     description = "Go to position " .. coordinate.x .. ", " .. coordinate.y .. " until " .. os.date( "!%T", till ) .. ".",
@@ -163,6 +190,10 @@ function yarrrconfig.go_to( mission, coordinate, on_arrive )
     teardown = on_arrive
   } )
 
+end
+
+function yarrrconfig.go_to( mission, coordinate, on_arrive )
+  yarrrconfig.go_to_in_seconds( mission, coordinate, 300, on_arrive )
 end
 
 function yarrrconfig.go_home( mission )
