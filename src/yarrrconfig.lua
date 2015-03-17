@@ -104,7 +104,7 @@ end
 function yarrrconfig.add_instruction( mission, message )
   mission:add_objective( MissionObjective.new(
     message,
-    function() return succeeded end ) )
+    function() return na end ) )
 end
 
 function wrap_updater( setup, updater, teardown )
