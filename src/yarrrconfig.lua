@@ -21,9 +21,9 @@ function yarrrconfig.create_ship( object, tiles, additional_behaviors )
       PhysicalBehavior.new(),
       Inventory.new(),
       Collider.new( ship_layer ),
-      DamageCauser.new( 100 ),
       LootDropper.new(),
       ShapeBehavior.new( create_shape_from( tiles ) ),
+      DamageCauser.new(),
       ShapeGraphics.new()
     } )
 
