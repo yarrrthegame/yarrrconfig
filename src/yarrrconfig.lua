@@ -20,9 +20,10 @@ function yarrrconfig.create_ship( object, tiles, additional_behaviors )
   add_behaviors_to( object, {
       PhysicalBehavior.new(),
       Inventory.new(),
+      CargoSpace.new(),
       Collider.new( ship_layer ),
-      LootDropper.new(),
       ShapeBehavior.new( create_shape_from( tiles ) ),
+      LootDropper.new(),
       DamageCauser.new(),
       ShapeGraphics.new()
     } )
