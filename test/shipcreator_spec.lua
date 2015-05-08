@@ -6,6 +6,9 @@ _G.PhysicalBehavior = {
 _G.Inventory = {
   new = function() return "inventory" end }
 
+_G.CargoSpace = {
+  new = function() return "cargospace" end }
+
 _G.Collider = {
   new = function() return "collider" end }
 
